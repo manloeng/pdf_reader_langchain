@@ -1,5 +1,7 @@
 from typing import Dict
-from langchain.schema.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.messages.ai import AIMessage
+from langchain_core.messages.human import HumanMessage
+from langchain_core.messages.system import SystemMessage
 from app.web.db import db
 from app.web.db.models import Message
 from app.web.db.models.conversation import Conversation

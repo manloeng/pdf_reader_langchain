@@ -43,6 +43,7 @@ def create_message(conversation):
     )
 
     chat = build_chat(chat_args)
+    chat.invoke(input)
 
     if not chat:
         return "Chat not yet implemented!"

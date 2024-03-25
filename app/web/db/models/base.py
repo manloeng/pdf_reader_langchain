@@ -9,9 +9,9 @@ class BaseModel(db.Model):
     __abstract__ = True
 
     @classmethod
-    def create(cls: Type[T], commit=True, **kwargs) -> T:
+    def create(cls: Type[T], **kwargs) -> T:
         instance = cls(**kwargs)
-        return instance.save(commit)
+        return instance.save()
 
     @classmethod
     def find_by(cls: Type[T], **kwargs) -> Optional[T]:
@@ -22,25 +22,23 @@ class BaseModel(db.Model):
         return db.session.execute(db.select(cls).filter_by(**kwargs)).scalars().all()
 
     @classmethod
-    def upsert(cls: Type[T], commit=True, **kwargs) -> T:
+    def upsert(cls: Type[T], **kwargs) -> T:
         instance = None
         if kwargs.get("id"):
             instance = cls.find_by(id=kwargs["id"])
 
         if instance:
-            instance.update(commit, **kwargs)
+            instance.update(**kwargs)
             return instance
         else:
             instance = cls.create(**kwargs)
             return instance
 
     @classmethod
-    def delete_by(cls, commit: bool = True, **kwargs) -> None:
+    def delete_by(cls, **kwargs) -> None:
         instance = cls.find_by(**kwargs)
         db.session.delete(instance)
-        if commit:
-            return db.session.commit()
-        return
+        return db.session.commit()
 
     @classmethod
     def as_dicts(cls, models):
@@ -50,16 +48,13 @@ class BaseModel(db.Model):
     def as_dict(self):
         raise NotImplementedError
 
-    def update(self, commit=True, **kwargs):
+    def update(self, **kwargs):
         for attr, value in kwargs.items():
             if attr != ["id"]:
                 setattr(self, attr, value)
-        if commit:
-            return self.save()
-        return self
+        return self.save()
 
-    def save(self, commit=True):
+    def save(self):
         db.session.add(self)
-        if commit:
-            db.session.commit()
+        db.session.commit()
         return self
