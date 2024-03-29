@@ -16,9 +16,9 @@ vector_store = PineconeVectorStore.from_existing_index(
 )
 
 
-def build_retriever(chat_args):
+def build_retriever(chat_args, k):
     try:
-        search_kwargs = {"filter": {"pdf_id": chat_args.pdf_id}}
+        search_kwargs = {"filter": {"pdf_id": chat_args.pdf_id, k: k}}
         return vector_store.as_retriever(search_kwargs=search_kwargs)
     except Exception as e:
         print(e, "err")
